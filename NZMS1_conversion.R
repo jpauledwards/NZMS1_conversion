@@ -381,13 +381,13 @@ MapRefCoords2 <- MapRefCoords%>%
   mutate(EastYard = ifelse(round(floor(SheetEast*10^-5)/10^-5, digits = 0)+as.integer(MapRefEast)*100<SheetEast,round(floor(SheetEast*10^-5)/10^-5, digits = 0)+as.integer(MapRefEast)*100+100000,round(floor(SheetEast*10^-5)/10^-5, digits = 0)+as.integer(MapRefEast)*100))%>%
   mutate(NorthYard = ifelse(round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+as.integer(MapRefNorth)*100<SheetNorth,round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+as.integer(MapRefNorth)*100+100000,round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+as.integer(MapRefNorth)*100))
 
-#Select North Island coordinates and convert to WGS84
+#Select North Island coordinates and convert to NZTM
 NIMapRefCoords <- MapRefCoords2%>%
   filter(Island=="N")%>%
   st_as_sf(coords=c("EastYard", "NorthYard"), crs=NIYG, remove=FALSE)%>%
   st_transform(crs=NZTM)
 
-#Select South Island coordinates and convert to WGS84
+#Select South Island coordinates and convert to NZTM
 SIMapRefCoords <- MapRefCoords2%>%
   filter(Island=="S")%>%
   st_as_sf(coords=c("EastYard", "NorthYard"), crs=SIYG, remove=FALSE)%>%
