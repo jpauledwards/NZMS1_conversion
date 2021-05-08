@@ -2,14 +2,13 @@ library(tidyverse)
 library(sf)
 
 #Projections
-NIYG <- "+proj=tmerc +lat_0=-39 +lon_0=175.5 +k=1 +x_0=300000 +y_0=400000 +ellps=intl +units=yd +no_defs"
-SIYG <- "+proj=tmerc +lat_0=-44 +lon_0=171.5 +k=1 +x_0=500000 +y_0=500000 +ellps=intl +units=yd +no_defs"
+NIYG  <- "+proj=tmerc +lat_0=-39 +lon_0=175.5 +k=1.0000017338 +x_0=274320 +y_0=365760 +ellps=intl +units=yd +datum=nzgd49 +no_defs"
+SIYG  <- "+proj=tmerc +lat_0=-44 +lon_0=171.5 +k=1.0000017338 +x_0=457200 +y_0=457200 +ellps=intl +units=yd +datum=nzgd49 +no_defs"
 WGS84 <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"
-
-YardGrid <- st_crs(27291)
+NZTM  <- "+proj=tmerc +lat_0=0 +lon_0=173 +k=0.9996 +x_0=1600000 +y_0=10000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
 
 #Load data
-MapRefCoords <- read.csv("DIGAD_coords.csv")
+MapRefCoords <- read.csv("InputCoords.csv")
 
 #Map sheet references
 MapSheets <- tribble(~Sheet, ~SheetNorth, ~SheetEast,
@@ -377,28 +376,46 @@ MapSheets <- tribble(~Sheet, ~SheetNorth, ~SheetEast,
 #Convert map references to yard grid
 MapRefCoords2 <- MapRefCoords%>%
   separate("MapRef", c("Sheet","MapRefEast","MapRefNorth"),  sep = c(4,7), remove = FALSE, convert = TRUE, extra = "merge")%>%
-  separate("MapRef", c("Island"),  sep = 1, remove = FALSE, convert = TRUE, extra = "drop")%>%
+  separate("MapRef", c("Island","SheetNo","ChrMapRefEast","ChrMapRefNorth"),  sep = c(1,4,7), remove = FALSE, convert = FALSE, extra = "merge")%>%
+  mutate(LINZ_format = paste0(Island,as.integer(SheetNo)," ",ChrMapRefEast," ",ChrMapRefNorth))%>%
   left_join(MapSheets, by = c("Sheet"))%>%
-  mutate(EastYard = ifelse(floor(SheetEast*10^-5)/10^-5+MapRefEast*100<SheetEast,floor(SheetEast*10^-5)/10^-5+MapRefEast*100+100000,floor(SheetEast*10^-5)/10^-5+MapRefEast*100))%>%
-  mutate(NorthYard = ifelse(floor(SheetNorth*10^-5)/10^-5+MapRefNorth*100<SheetNorth,floor(SheetNorth*10^-5)/10^-5+MapRefNorth*100+100000,floor(SheetNorth*10^-5)/10^-5+MapRefNorth*100))
+  mutate(EastYard = ifelse(round(floor(SheetEast*10^-5)/10^-5, digits = 0)+MapRefEast*100<SheetEast,round(floor(SheetEast*10^-5)/10^-5, digits = 0)+MapRefEast*100+100000,round(floor(SheetEast*10^-5)/10^-5, digits = 0)+MapRefEast*100))%>%
+  mutate(NorthYard = ifelse(round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+MapRefNorth*100<SheetNorth,round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+MapRefNorth*100+100000,round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+MapRefNorth*100))
 
-#Select North Island coordinates and convert
+#Select base CRS to use
+BaseCRS <- NZTM
+
+#Select North Island coordinates and convert to WGS84
 NIMapRefCoords <- MapRefCoords2%>%
   filter(Island=="N")%>%
   st_as_sf(coords=c("EastYard", "NorthYard"), crs=NIYG, remove=FALSE)%>%
-  st_transform(crs=WGS84)
+  st_transform(crs=BaseCRS)
 
-#Select South Island coordinates and convert
+#Select South Island coordinates and convert to WGS84
 SIMapRefCoords <- MapRefCoords2%>%
   filter(Island=="S")%>%
   st_as_sf(coords=c("EastYard", "NorthYard"), crs=SIYG, remove=FALSE)%>%
-  st_transform(crs=WGS84)
+  st_transform(crs=BaseCRS)
 
 #Merge back to single dataset
-ConvertedCoords <- bind_rows(NIMapRefCoords,SIMapRefCoords)
+ConvertedCoords <- NIMapRefCoords%>%
+  bind_rows(SIMapRefCoords)%>%
+  select(MapRef, LINZ_format, geometry)
 
-#Plot points
+#Load TLA boundaries
+TLA <- read_sf("C:/Users/EdwardsP/OneDrive - DairyNZ Limited/GIS/Kellogg/TLA(incAKL).shp")
+TLA <- st_transform(TLA, crs=BaseCRS)
+TLA <- mutate(TLA, Location = paste0(NAME_2, " ", TYPE_2, ", ", NAME_1))
+
+#Plot points for visual check
 ggplot() +
+  geom_sf(data=TLA, aes())+
   geom_sf(data=ConvertedCoords, aes())
 
+#Determine TLA
+i <- as.integer(st_within(ConvertedCoords, TLA))
+ConvertedCoords$Location <- TLA$Location[i]
+
+#Export csv
+write_csv(ConvertedCoords, file="ConvertedCoords.csv")
 
