@@ -1,0 +1,110 @@
+<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns="http://www.isotc211.org/2005/gmd">
+  <gmd:fileIdentifier>
+    <gco:CharacterString>58459e94-fd2e-b22d-8f21-38c1b0253f78</gco:CharacterString>
+  </gmd:fileIdentifier>
+  <gmd:language>
+    <gco:CharacterString>eng</gco:CharacterString>
+  </gmd:language>
+  <gmd:hierarchyLevel>
+    <gmd:MD_ScopeCode codeList="./resources/codeList.xml#MD_ScopeCode" codeListValue="005"/>
+  </gmd:hierarchyLevel>
+  <gmd:hierarchyLevelName>
+    <gco:CharacterString>dataset</gco:CharacterString>
+  </gmd:hierarchyLevelName>
+  <gmd:dateStamp>
+    <gco:DateTime>20190327</gco:DateTime>
+  </gmd:dateStamp>
+  <gmd:metadataStandardName>
+    <gco:CharacterString>ISO 19115:2003/19139</gco:CharacterString>
+  </gmd:metadataStandardName>
+  <gmd:metadataStandardVersion>
+    <gco:CharacterString>1.0</gco:CharacterString>
+  </gmd:metadataStandardVersion>
+  <gmd:spatialRepresentationInfo>
+    <gmd:MD_VectorSpatialRepresentation>
+      <gmd:topologyLevel>
+        <gmd:MD_TopologyLevelCode codeList="./resources/codeList.xml#MD_TopologyLevelCode" codeListValue="001"/>
+      </gmd:topologyLevel>
+      <gmd:geometricObjects>
+        <gmd:MD_GeometricObjects>
+          <gmd:geometricObjectType>
+            <gmd:MD_GeometricObjectTypeCode codeList="./resources/codeList.xml#MD_GeometricObjectTypeCode" codeListValue="002"/>
+          </gmd:geometricObjectType>
+          <gmd:geometricObjectCount>
+            <gco:Integer>0</gco:Integer>
+          </gmd:geometricObjectCount>
+        </gmd:MD_GeometricObjects>
+      </gmd:geometricObjects>
+    </gmd:MD_VectorSpatialRepresentation>
+  </gmd:spatialRepresentationInfo>
+  <gmd:identificationInfo>
+    <gmd:MD_DataIdentification>
+      <gmd:citation>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>TA1995</gco:CharacterString>
+          </gmd:title>
+          <gmd:presentationForm>
+            <gmd:CI_PresentationFormCode codeList="./resources/codeList.xml#CI_PresentationFormCode" codeListValue="005"/>
+          </gmd:presentationForm>
+        </gmd:CI_Citation>
+      </gmd:citation>
+      <gmd:abstract>
+        <gco:CharacterString/>
+      </gmd:abstract>
+      <gmd:spatialRepresentationType>
+        <gmd:MD_SpatialRepresentationTypeCode codeList="./resources/codeList.xml#MD_SpatialRepresentationTypeCode" codeListValue="001"/>
+      </gmd:spatialRepresentationType>
+      <gmd:language>
+        <gco:CharacterString>eng</gco:CharacterString>
+      </gmd:language>
+      <gmd:environmentDescription>
+        <gco:CharacterString>Version 6.2 (Build 9200) ; Esri ArcGIS 10.3.1.4959</gco:CharacterString>
+      </gmd:environmentDescription>
+      <gmd:extent>
+        <gmd:EX_Extent>
+          <gmd:geographicElement>
+            <gmd:EX_GeographicBoundingBox>
+              <gmd:westBoundLongitude>
+                <gco:Decimal>166.134457943</gco:Decimal>
+              </gmd:westBoundLongitude>
+              <gmd:eastBoundLongitude>
+                <gco:Decimal>178.804823957</gco:Decimal>
+              </gmd:eastBoundLongitude>
+              <gmd:southBoundLatitude>
+                <gco:Decimal>-47.4884269152</gco:Decimal>
+              </gmd:southBoundLatitude>
+              <gmd:northBoundLatitude>
+                <gco:Decimal>-33.9340996489</gco:Decimal>
+              </gmd:northBoundLatitude>
+            </gmd:EX_GeographicBoundingBox>
+          </gmd:geographicElement>
+        </gmd:EX_Extent>
+      </gmd:extent>
+    </gmd:MD_DataIdentification>
+  </gmd:identificationInfo>
+  <gmd:distributionInfo>
+    <gmd:MD_Distribution>
+      <gmd:transferOptions>
+        <gmd:MD_DigitalTransferOptions>
+          <gmd:onLine>
+            <gmd:CI_OnlineResource>
+              <gmd:linkage>
+                <gmd:URL>https://datafinder.stats.govt.nz/layer/99723-territorial-authority-1995-generalised/</gmd:URL>
+              </gmd:linkage>
+            </gmd:CI_OnlineResource>
+          </gmd:onLine>
+        </gmd:MD_DigitalTransferOptions>
+      </gmd:transferOptions>
+    </gmd:MD_Distribution>
+  </gmd:distributionInfo>
+  <gmd:metadataConstraints>
+    <gmd:MD_LegalConstraints>
+      <gmd:useLimitation>Attribution 4.0 International</gmd:useLimitation>
+      <gmd:useLimitation>https://creativecommons.org/licenses/by/4.0/</gmd:useLimitation>
+      <gmd:useConstraints>
+        <gmd:MD_RestrictionCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#MD_RestrictionCode" codeListValue="license">license</gmd:MD_RestrictionCode>
+      </gmd:useConstraints>
+    </gmd:MD_LegalConstraints>
+  </gmd:metadataConstraints>
+</gmd:MD_Metadata>

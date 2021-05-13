@@ -2,9 +2,10 @@ library(tidyverse)
 library(sf)
 
 #Projections
-NIYG  <- "+proj=tmerc +lat_0=-39 +lon_0=175.5 +k=1.0000017338 +x_0=274319.523  +y_0=365759.364   +ellps=intl +units=yd +datum=nzgd49 +no_defs"
-SIYG  <- "+proj=tmerc +lat_0=-44 +lon_0=171.5 +k=1.0000017338 +x_0=457199.205  +y_0=457199.205   +ellps=intl +units=yd +datum=nzgd49 +no_defs"
-NZTM  <- "+proj=tmerc +lat_0=0   +lon_0=173   +k=0.9996       +x_0=1600000     +y_0=10000000     +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+NIYG  <- "+proj=tmerc +lat_0=-39 +lon_0=175.5 +k=1.0000017338 +x_0=274320  +y_0=365760   +ellps=intl +datum=nzgd49 +units=yd +no_defs"
+SIYG  <- "+proj=tmerc +lat_0=-44 +lon_0=171.5 +k=1.0000017338 +x_0=457200  +y_0=457200   +ellps=intl +datum=nzgd49 +units=yd +no_defs"
+NZTM  <- "+proj=tmerc +lat_0=0   +lon_0=173   +k=0.9996       +x_0=1600000 +y_0=10000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
+NZMG  <- "+proj=nzmg  +lat_0=-41 +lon_0=173                   +x_0=2510000 +y_0=6023150  +ellps=intl +datum=nzgd49 +units=m +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993 +nadgrids=nzgd2kgrid0005.gsb +no_defs"
 
 #Load data
 MapRefCoords <- read.csv("InputCoords.csv")
@@ -381,40 +382,48 @@ MapRefCoords2 <- MapRefCoords%>%
   mutate(EastYard = ifelse(round(floor(SheetEast*10^-5)/10^-5, digits = 0)+as.integer(MapRefEast)*100<SheetEast,round(floor(SheetEast*10^-5)/10^-5, digits = 0)+as.integer(MapRefEast)*100+100000,round(floor(SheetEast*10^-5)/10^-5, digits = 0)+as.integer(MapRefEast)*100))%>%
   mutate(NorthYard = ifelse(round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+as.integer(MapRefNorth)*100<SheetNorth,round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+as.integer(MapRefNorth)*100+100000,round(floor(SheetNorth*10^-5)/10^-5, digits = 0)+as.integer(MapRefNorth)*100))
 
-#Select North Island coordinates and convert to NZTM
+#Select North Island coordinates and convert to NZMG
 NIMapRefCoords <- MapRefCoords2%>%
   filter(Island=="N")%>%
   st_as_sf(coords=c("EastYard", "NorthYard"), crs=NIYG, remove=FALSE)%>%
-  st_transform(crs=NZTM)
+  st_transform(crs=NZMG)
 
-#Select South Island coordinates and convert to NZTM
+#Select South Island coordinates and convert to NZMG
 SIMapRefCoords <- MapRefCoords2%>%
   filter(Island=="S")%>%
   st_as_sf(coords=c("EastYard", "NorthYard"), crs=SIYG, remove=FALSE)%>%
+  st_transform(crs=NZMG)
+
+#Merge back to single data set and convert to NZTM
+ConvertedCoords <- NIMapRefCoords%>%
+  bind_rows(SIMapRefCoords)%>%
   st_transform(crs=NZTM)
 
-#Merge back to single dataset
-ConvertedCoords <- NIMapRefCoords%>%
-  bind_rows(SIMapRefCoords)
-
-#Load TLA boundaries
-TLA <- read_sf("C:/Users/EdwardsP/OneDrive - DairyNZ Limited/GIS/Kellogg/TLA(incAKL).shp")
-TLA <- st_transform(TLA, crs=NZTM)
-TLA <- mutate(TLA, Location = paste0(NAME_2, " ", TYPE_2, ", ", NAME_1))
+#Load location boundaries
+TLA1995 <- read_sf("territorial-authority-1995-generalised.shp")
+TLA1995 <- st_transform(TLA1995, crs=NZTM)
+TLA2020 <- read_sf("territorial-authority-2020-generalised.shp")
+TLA2020 <- st_transform(TLA2020, crs=NZTM)
+RC2020 <- read_sf("regional-council-2020-generalised.shp")
+RC2020 <- st_transform(RC2020, crs=NZTM)
 
 #Plot points for visual check
 ggplot() +
-  geom_sf(data=TLA, aes())+
+  geom_sf(data=TLA2020, aes())+
   geom_sf(data=ConvertedCoords, aes())
 
-#Determine TLA
-i <- as.integer(st_within(ConvertedCoords, TLA))
-ConvertedCoords$Location <- TLA$Location[i]
+#Determine location  - could intersect polygons to make this 1 step?
+i <- as.integer(st_within(ConvertedCoords, TLA1995))
+ConvertedCoords$TLA1995 <- TLA1995$TA1995_V_1[i]
+i <- as.integer(st_within(ConvertedCoords, TLA2020))
+ConvertedCoords$TLA2020 <- TLA2020$TA2020_V_2[i]
+i <- as.integer(st_within(ConvertedCoords, RC2020))
+ConvertedCoords$REGC2020 <- RC2020$REGC2020_2[i]
 
 #Clean up data for export
 ConvertedCoords2 <- ConvertedCoords%>%
   as.data.frame()%>%
-  select(MapRef, LINZ, geometry, Location)%>%
+  select(MapRef, LINZ, geometry, TLA1995, TLA2020, REGC2020)%>%
   mutate(geometry = map(geometry, setNames, c("NZTM_Easting","NZTM_Northing")))%>%
   unnest_wider(geometry)
   
