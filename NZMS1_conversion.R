@@ -482,7 +482,7 @@ write_csv(ConvertedCoordsFinal, file = "ConvertedCoords.csv")
 # I have a stackoverflow question on resolving this
 # https://stackoverflow.com/q/72610074/4927395
 
-## functional approach
+## functional approach to short path name to avoid spaces in directory path
 ## https://github.com/r-lib/here/issues/82#issuecomment-1154644055
 # here_short <- function(...) {
 #   shortPathName(here(...))
