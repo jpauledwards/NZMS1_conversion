@@ -9,17 +9,18 @@ The yard grids can then be converted to NZMG (NZ Map Grid), a slightly less old 
 
 Many thanks to Chris Cook and Yu-Ching Lee from LINZ who were extremely helpful in understanding this process.
 
-References:
-New Zealand Coordinate Conversions
-Use this form to convert coordinates between datums, projections and height coordinate systems used in New Zealand.
+# References
+
+New Zealand Coordinate Conversions 
+Use this form to convert coordinates between datums, projections and height coordinate systems used in New Zealand. 
 https://www.geodesy.linz.govt.nz/concord/
 
 NZGD1949 - NZGD2000
-This page outlines multiple ways to transform geodetic coordinates. The choice of which method is the most appropriate will depend on the accuracy of the coordinates being converted and their intended use.
+This page outlines multiple ways to transform geodetic coordinates. The choice of which method is the most appropriate will depend on the accuracy of the coordinates being converted and their intended use. 
 https://www.linz.govt.nz/data/geodetic-system/coordinate-conversion/geodetic-datum-conversions/nzgd1949-nzgd2000
 
-Converting NZMG (or NZTM) to latitude / longitude for use with R map library
+Converting NZMG (or NZTM) to latitude / longitude for use with R map library 
 https://gis.stackexchange.com/questions/20389/converting-nzmg-or-nztm-to-latitude-longitude-for-use-with-r-map-library
 
-Perl code that converts between NZMS1 map references and NZGD49 latitude and longitude
+Perl code that converts between NZMS1 map references and NZGD49 latitude and longitude 
 https://github.com/linz/liblinz-geodetic-perl/blob/master/lib/LINZ/Geodetic/NZMS1MapRef.pm

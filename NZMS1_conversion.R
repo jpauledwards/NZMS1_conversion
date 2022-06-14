@@ -3,16 +3,22 @@
 library(tidyverse)
 library(sf)
 library(here)
+library(utils)
 
 # Projections
 NIYG <- "+proj=tmerc +lat_0=-39 +lon_0=175.5 +k=1.0000017338 +x_0=274320  +y_0=365760   +ellps=intl +datum=nzgd49 +units=yd +no_defs"
 SIYG <- "+proj=tmerc +lat_0=-44 +lon_0=171.5 +k=1.0000017338 +x_0=457200  +y_0=457200   +ellps=intl +datum=nzgd49 +units=yd +no_defs"
 NZTM <- "+proj=tmerc +lat_0=0   +lon_0=173   +k=0.9996       +x_0=1600000 +y_0=10000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-NZMG <- "+proj=nzmg  +lat_0=-41 +lon_0=173 +x_0=2510000 +y_0=6023150  +ellps=intl +datum=nzgd49 +units=m +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993 +nadgrids=nzgd2kgrid0005.gsb +no_defs"
+# NZMG <- "+proj=nzmg  +lat_0=-41 +lon_0=173 +x_0=2510000 +y_0=6023150  +ellps=intl +datum=nzgd49 +units=m +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993 +nadgrids=nzgd2kgrid0005.gsb +no_defs"
+# NZMG
 # n.b. it looks like NZMG needs this file - nzgd2kgrid0005.gsb
 # Available at LINZ link below (and now copied into this repo, see file list), but where does it need to go on your computer?
 # https://www.linz.govt.nz/data/geodetic-system/download-geodetic-software/gd2000it-download
 # The answer is, copy the file nzgd2kgrid0005.gsb from this project folder, to the "proj" folder, in your "rgdal" folder, wherever your R packages are saved. Then it should work.
+
+# option 2, use short path name to point to location in this project
+NZMG <- paste0("+proj=nzmg  +lat_0=-41 +lon_0=173 +x_0=2510000 +y_0=6023150  +ellps=intl +datum=nzgd49 +units=m +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993 +nadgrids=", shortPathName(here()), "/nzgd2kgrid0005.gsb +no_defs")
+NZMG
 
 # Load data
 MapRefCoords <- read.csv("InputCoordsExample.csv")
@@ -475,3 +481,11 @@ write_csv(ConvertedCoordsFinal, file = "ConvertedCoords.csv")
 # Until this projection works consistently, in the code I will skip the NZMG step. Some loss of accuracy may result. 
 # I have a stackoverflow question on resolving this
 # https://stackoverflow.com/q/72610074/4927395
+
+## functional approach
+## https://github.com/r-lib/here/issues/82#issuecomment-1154644055
+# here_short <- function(...) {
+#   shortPathName(here(...))
+# }
+# 
+# here_short()
