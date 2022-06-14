@@ -438,16 +438,19 @@ ggplot() +
   geom_sf(data = TLA2020, aes()) +
   geom_sf(data = ConvertedCoords, aes())
 
-# Determine location  - could intersect polygons to make this 1 step?
+## Determine location  - could intersect polygons to make this 1 step?
+# i <- as.integer(st_within(ConvertedCoords, TLA1995))
+# ConvertedCoords$TLA1995 <- TLA1995$TA1995_V_1[i]
+# i <- as.integer(st_within(ConvertedCoords, TLA2020))
+# ConvertedCoords$TLA2020 <- TLA2020$TA2020_V_2[i]
+# i <- as.integer(st_within(ConvertedCoords, RC2020))
+# ConvertedCoords$REGC2020 <- RC2020$REGC2020_2[i]
 
+## testing Single step
 ConvertedCoords <- st_join(ConvertedCoords, TLA1995, join = st_within)
+ConvertedCoords <- st_join(ConvertedCoords, TLA2020, join = st_within)
+ConvertedCoords <- st_join(ConvertedCoords, RC2020, join = st_within)
 
-i <- as.integer(st_within(ConvertedCoords, TLA1995))
-ConvertedCoords$TLA1995 <- TLA1995$TA1995_V_1[i]
-i <- as.integer(st_within(ConvertedCoords, TLA2020))
-ConvertedCoords$TLA2020 <- TLA2020$TA2020_V_2[i]
-i <- as.integer(st_within(ConvertedCoords, RC2020))
-ConvertedCoords$REGC2020 <- RC2020$REGC2020_2[i]
 
 # Clean up data for export - NZTM Eastings and Northings
 ConvertedCoords2 <- ConvertedCoords %>%
