@@ -436,7 +436,7 @@ RC2020 <- st_transform(RC2020, crs = NZTM)
 # Plot points for visual check
 ggplot() +
   geom_sf(data = TLA2020, aes()) +
-  geom_sf(data = ConvertedCoords, aes())
+  geom_sf(data = ConvertedCoords, aes(), colour = "red")
 
 ## Determine location  - could intersect polygons to make this 1 step?
 # i <- as.integer(st_within(ConvertedCoords, TLA1995))
@@ -455,7 +455,7 @@ ConvertedCoords <- st_join(ConvertedCoords, RC2020, join = st_within)
 # Clean up data for export - NZTM Eastings and Northings
 ConvertedCoords2 <- ConvertedCoords %>%
   as.data.frame() %>%
-  select(MapRef, LINZ, geometry, TLA1995, TLA2020, REGC2020) %>%
+  select(MapRef, LINZ, geometry, TA1995_V_1, TA2020_V_1, REGC2020_1) %>%
   mutate(geometry = map(geometry, setNames, c("NZTM_Easting", "NZTM_Northing"))) %>%
   unnest_wider(geometry)
 
@@ -463,11 +463,11 @@ ConvertedCoords2 <- ConvertedCoords %>%
 ConvertedCoords3 <- ConvertedCoords %>%
   st_transform(crs = 4326) %>% 
   as.data.frame() %>%
-  select(MapRef, LINZ, geometry, TLA1995, TLA2020, REGC2020) %>%
+  select(MapRef, LINZ, geometry, TA1995_V_1, TA2020_V_1, REGC2020_1) %>%
   mutate(geometry = map(geometry, setNames, c("Longitude", "Latitude"))) %>%
   unnest_wider(geometry)
 
 ConvertedCoordsFinal <- left_join(ConvertedCoords2, ConvertedCoords3)
-
+ConvertedCoordsFinal
 # Export csv
 write_csv(ConvertedCoordsFinal, file = "ConvertedCoords.csv")
