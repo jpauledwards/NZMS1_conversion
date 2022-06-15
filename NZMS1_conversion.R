@@ -5,12 +5,15 @@ library(sf)
 library(here)
 library(utils)
 
+sf_extSoftVersion()[1:3]
+
 # Projections
 NIYG <- "+proj=tmerc +lat_0=-39 +lon_0=175.5 +k=1.0000017338 +x_0=274320  +y_0=365760   +ellps=intl +datum=nzgd49 +units=yd +no_defs"
 SIYG <- "+proj=tmerc +lat_0=-44 +lon_0=171.5 +k=1.0000017338 +x_0=457200  +y_0=457200   +ellps=intl +datum=nzgd49 +units=yd +no_defs"
 NZTM <- "+proj=tmerc +lat_0=0   +lon_0=173   +k=0.9996       +x_0=1600000 +y_0=10000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
-# NZMG <- "+proj=nzmg  +lat_0=-41 +lon_0=173 +x_0=2510000 +y_0=6023150  +ellps=intl +datum=nzgd49 +units=m +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993 +nadgrids=nzgd2kgrid0005.gsb +no_defs"
+# NZMG <- "+proj=nzmg  +lat_0=-41 +lon_0=173 +x_0=2510000                 +y_0=6023150  +ellps=intl +datum=nzgd49 +units=m +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993 +nadgrids=nzgd2kgrid0005.gsb +no_defs"
 # NZMG
+
 # n.b. it looks like NZMG needs this file - nzgd2kgrid0005.gsb
 # Available at LINZ link below (and now copied into this repo, see file list), but where does it need to go on your computer?
 # https://www.linz.govt.nz/data/geodetic-system/download-geodetic-software/gd2000it-download
@@ -401,15 +404,21 @@ MapRefCoords2 <- MapRefCoords %>%
 NIMapRefCoords <- MapRefCoords2 %>%
   filter(Island == "N") %>%
   st_as_sf(coords = c("EastYard", "NorthYard"), crs = NIYG, remove = FALSE) %>%
-  st_transform(crs = NZMG) ## Now working! creates empty points unless .gsb file is available in folder with no spaces
-  #st_transform(crs = 4326) #works
+  st_transform(crs = NZMG) %>%  ## Now working! creates empty points unless .gsb file is available in folder with no spaces
+  #st_transform(crs = "EPSG:9811") # CRS for NZMG from Proj website, not working. https://proj.org/development/reference/cpp/operation.html?highlight=datum+nzmg
+  #st_transform(crs = NZTM) # manual proj string for NZTM
+  st_transform(crs = "EPSG:2193") # CRS for NZTM
+  #st_transform(crs = 4326) #works, CRS fro WGS84 google
+
 
 
 # Select South Island coordinates and convert to NZMG
 SIMapRefCoords <- MapRefCoords2 %>%
   filter(Island == "S") %>%
   st_as_sf(coords = c("EastYard", "NorthYard"), crs = SIYG, remove = FALSE) %>%
-  st_transform(crs = NZMG) ## Now working! creates empty points
+  st_transform(crs = NZMG) %>% ## Now working! creates empty points unless .gsb file is available in folder with no spaces
+  st_transform(crs = NZTM) # manual proj string for NZTM
+  #st_transform(crs = "EPSG:2193") # CRS for NZTM
   #st_transform(crs = 4326) #works
 
 # Merge back to single data set and convert to NZTM
