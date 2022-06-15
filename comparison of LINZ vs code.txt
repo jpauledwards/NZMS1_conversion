@@ -1,0 +1,38 @@
+NZMS1
+N7 857 978
+S183 835 975
+
+LINZ says:
+NIYG
+85700.000	897800.000
+SIYG
+283500.000	197500.000
+
+NZMG
+2543552.099	6702538.617
+2196652.742	5408863.680
+
+NZTM
+1632627.371	6140456.262
+1286946.612	4846964.366
+
+
+Code (15/6) says
+NIYG
+85700    897800
+SIYG
+283500    197500
+
+NZMG (manual proj string)
+2543552 6702539
+2196653 5408864
+
+NZTM
+1632625 6140458 (manual Proj string)
+1632627 6140458 (built in CRS)
+1632627 6140456 (to NZMG, then to NZTM, manual proj string or built in) [correct as per LINZ]
+
+NZTM
+1286949 4846964 (manual Proj string)
+1286944 4846965 (built in CRS)
+1286947 4846964 (to NZMG, then to NZTM, manual proj string or built in) [correct as per LINZ]
